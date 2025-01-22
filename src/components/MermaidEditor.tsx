@@ -28,10 +28,11 @@ export const MermaidEditor: React.FC = () => {
   const [filePath, setFilePath] = useState<string | null>(null);
   const [fileType, setFileType] = useState<string>('.mmd');
   const [convertedCode, setConvertedCode] = useState<string | null>(null);
+  const [isReverse, setIsReverse] = useState(false);
 
   const renderDiagram = useCallback(async () => {
     try {
-      const processedCode = processDiagramContent(code);
+      const processedCode = processDiagramContent(code, isReverse);
       setConvertedCode(fileType === '.dot' ? processedCode : null);
       const { svg } = await mermaid.render('mermaid-diagram', processedCode);
       const container = document.getElementById('diagram-container');
@@ -42,7 +43,7 @@ export const MermaidEditor: React.FC = () => {
     } catch (err) {
       setError(getErrorMessage(err));
     }
-  }, [code, fileType]);
+  }, [code, fileType, isReverse]);
 
   useEffect(() => {
     renderDiagram();
@@ -127,6 +128,17 @@ export const MermaidEditor: React.FC = () => {
       </div>
 
       <div className="flex-1 p-4 flex flex-col space-y-4">
+        {fileType === '.dot' && (
+          <div className="flex items-center gap-2 mb-4">
+            <input
+              type="checkbox"
+              id="reverse"
+              checked={isReverse}
+              onChange={(e) => setIsReverse(e.target.checked)}
+            />
+            <label htmlFor="reverse">Reverse Graph</label>
+          </div>
+        )}
         <div className="grid grid-cols-2 gap-4 flex-1">
           <textarea
             value={code}
@@ -145,7 +157,6 @@ export const MermaidEditor: React.FC = () => {
             </div>
           )}
         </div>
-        
         {error && (
           <div className="p-4 bg-red-100 text-red-700 rounded-md">
             {error}

@@ -26,17 +26,16 @@ export const detectDiagramType = (content: string): string => {
   throw new Error('Unsupported diagram format');
 };
 
-export const convertDotToMermaid = (dotContent: string): string => {
-  const tasks = parseDotFile(dotContent);
+export const convertDotToMermaid = (dotContent: string, reverse: boolean): string => {
+  const tasks = parseDotFile(dotContent, reverse);
   return convertToMermaid(tasks);
 };
 
-export const processDiagramContent = (content: string, fileType?: string): string => {
-  // If no fileType is provided or it's auto-detected, determine from content
-  const detectedType = fileType || detectDiagramType(content);
+export const processDiagramContent = (content: string, reverse: boolean): string => {
+  const detectedType = detectDiagramType(content);
   
   if (detectedType === '.dot') {
-    return convertDotToMermaid(content);
+    return convertDotToMermaid(content, reverse);
   }
   return content;
 };

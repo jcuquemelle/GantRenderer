@@ -1,9 +1,13 @@
 import { read } from 'graphlib-dot';
 import { Task } from '../types/diagram';
+import { Graph } from 'graphlib';
 
-export const parseDotFile = (content: string): Task[] => {
+export const parseDotFile = (content: string, reverse: boolean): Task[] => {
   try {
-    const graph = read(content);
+    var graph = read(content);
+    if (reverse) {
+      reverseGraph(graph);
+    }
     const tasks: Task[] = [];
     const nodes = graph.nodes();
     
@@ -32,3 +36,11 @@ export const parseDotFile = (content: string): Task[] => {
     throw new Error('Invalid DOT file format');
   }
 };
+
+function reverseGraph(graph: Graph) {
+  graph.edges().forEach(edge => {
+    const previous = graph.edge(edge.v, edge.w);
+    graph.setEdge(edge.w, edge.v, previous.label, previous.name);
+    graph.removeEdge(edge.v, edge.w);
+  });
+}
