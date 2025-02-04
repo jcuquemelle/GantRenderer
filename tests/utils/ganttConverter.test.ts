@@ -1,9 +1,10 @@
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
-import { convertToMermaid } from '../../src/utils/ganttConverter';
+import { convertToMermaid, dateFormat } from '../../src/utils/ganttConverter';
 import { Task } from '../../src/types/diagram';
 import mermaid from "mermaid";
 import {parseDotFile} from "../../src/utils/dotParser";
+import {format} from "date-fns";
 
 describe('convertToMermaid', () => {
   it('should convert tasks to Mermaid Gantt chart format', () => {
@@ -12,12 +13,13 @@ describe('convertToMermaid', () => {
     const tasks: Task[] = JSON.parse(fileContent);
 
     const result = convertToMermaid(tasks);
-
+    const today = new Date();
+    const todayString = format(today, dateFormat);
     const expectedOutput = `gantt
   dateFormat YYYY-MM-DD
   title Task Dependencies Gantt Chart
   section Tasks
-  Task A :A, 2023-10-01, 3d
+  Task A :A, ${todayString}, 3d
   Task B :B, after A, 2d`;
 
     expect(result).toBe(expectedOutput);
@@ -30,7 +32,7 @@ describe('convertToMermaid', () => {
     
     
     const result = convertToMermaid(tasks);
-    
+
     // mermaid.render('mermaid-diagram', result)
     });
 });

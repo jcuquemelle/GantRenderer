@@ -1,10 +1,11 @@
-import { format, addDays } from 'date-fns';
+import { format } from 'date-fns';
 import { Task } from '../types/diagram';
+
+export const dateFormat = 'yyyy-MM-dd'
 
 export const convertToMermaid = (tasks: Task[]): string => {
   const today = new Date();
-  const dateFormat = 'yyyy-MM-dd';
-  
+
   // Calculate start dates based on dependencies
   const startDates = new Map<string, Date>();
   
@@ -28,7 +29,7 @@ export const convertToMermaid = (tasks: Task[]): string => {
       ? `after ${task.dependencies.join(' ')}`
       : format(startDates.get(task.id)!, dateFormat);
     
-    lines.push(`  ${task.label} :${task.id}, ${deps}, ${task.effort}d`);
+    lines.push(`  ${task.label.replace(/\n/g, ' ')} :${task.id}, ${deps}, ${task.effort}d`);
   });
 
   return lines.join('\n');
